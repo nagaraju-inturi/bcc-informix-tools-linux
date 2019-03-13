@@ -6,15 +6,13 @@
 #
 # 9-Mar-2019   Nagaraju Inturi Created this.
 #
-#./buffget_count.py
+#./ifmx_buffget_count.py
 #Tracing buffget()... Hit Ctrl-C to end.
-#^C     COUNT PHYSADDR
-#         1 "9:1272"
-#         1 "9:212"
-#         1 "9:1324"
-#         1 "9:1484"
-#         1 "9:3308"
-#         1 "9:564"
+#  PHYSADDR COUNT
+#7:676          1
+#7:1500         1
+#7:804          1
+#7:692          1
 
 from __future__ import print_function
 from bcc import BPF
@@ -58,9 +56,9 @@ except KeyboardInterrupt:
     pass
 
 # print output
-print("%10s %s" % ("COUNT", "PHYSADDR"))
+print("%10s %s" % ("PHYSADDR", "COUNT"))
 counts = b.get_table("counts")
 for k, v in sorted(counts.items(), key=lambda counts: counts[1].value):
-    offset = k.paddr & 0xFFFF
+    offset = k.paddr & 0xFFFFFFFF
     chunk = k.paddr  >> 32
-    print("%10d \"%d:%d\"" % (v.value, chunk, offset))
+    print("%d:%d %10d" % (chunk, offset, v.value))
